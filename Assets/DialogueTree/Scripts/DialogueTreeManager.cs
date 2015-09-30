@@ -32,13 +32,21 @@ public class DialogueTreeManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        DialogueTreeStates result = actualNode.OnAction();
-        if(result == DialogueTreeStates.SUCCESS)
+        if (actualNode != null)
         {
-            actualNode = actualNode.GetNextDialogue();
-        }else if(result == DialogueTreeStates.FAILURE)
+            DialogueTreeStates result = actualNode.OnAction();
+
+            if (result == DialogueTreeStates.SUCCESS)
+            {
+                actualNode = actualNode.GetNextDialogue();
+            }
+            else if (result == DialogueTreeStates.FAILURE)
+            {
+                //TODO: Finish the Dialogue;
+            } 
+        }else
         {
-            //TODO: Finish the Dialogue;
+            Destroy(gameObject);
         }
 	}
 }

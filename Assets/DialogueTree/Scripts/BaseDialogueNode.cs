@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BaseDialogueNode : MonoBehaviour
 {
-
+    protected DialogueTreeStates m_currentState;
 
     public virtual void OnEnabled()
     {
@@ -18,6 +18,11 @@ public class BaseDialogueNode : MonoBehaviour
     public virtual BaseDialogueNode GetNextDialogue()
     {
         return null;
+    }
+
+    protected virtual void InitializeDialoguePanel()
+    {
+
     }
 
 }

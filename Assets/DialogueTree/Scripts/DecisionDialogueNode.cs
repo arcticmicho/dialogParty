@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class DecisionDialogueNode : BaseDialogueNode
 {
@@ -14,7 +15,9 @@ public class DecisionDialogueNode : BaseDialogueNode
 
     private BaseDialogueNode nextDialogue;
     private GameObject dialoguePanel;
-    private DialogueTreeStates currentState;
+
+    public UnityEvent OnOptionASelected;
+    public UnityEvent OnOptionBSelected;
 
     public override void OnEnabled()
     {
@@ -28,7 +31,7 @@ public class DecisionDialogueNode : BaseDialogueNode
         {
             InitializeDialoguePanel();
         }
-        return currentState;
+        return m_currentState;
     }
 
     public override BaseDialogueNode GetNextDialogue()
@@ -37,9 +40,9 @@ public class DecisionDialogueNode : BaseDialogueNode
         return nextDialogue;
     }
 
-    private void InitializeDialoguePanel()
+    protected override void InitializeDialoguePanel()
     {
-        currentState = DialogueTreeStates.RUNNING;
+        m_currentState = DialogueTreeStates.RUNNING;
 
         dialoguePanel = Instantiate((GameObject)Resources.Load("DialoguePanel", typeof(GameObject)));
         Text[] messages = dialoguePanel.GetComponentsInChildren<Text>();
@@ -78,13 +81,21 @@ public class DecisionDialogueNode : BaseDialogueNode
 
     private void OnOptionAClicked()
     {
-        currentState = DialogueTreeStates.SUCCESS;
+        m_currentState = DialogueTreeStates.SUCCESS;
         nextDialogue = optionA;
+        if(OnOptionASelected != null)
+        {
+            OnOptionASelected.Invoke();
+        }
     }
 
     private void OnOptionBClicked()
     {
-        currentState = DialogueTreeStates.SUCCESS;
+        m_currentState = DialogueTreeStates.SUCCESS;
         nextDialogue = optionB;
+        if (OnOptionBSelected != null)
+        {
+            OnOptionBSelected.Invoke();
+        }
     }
 }

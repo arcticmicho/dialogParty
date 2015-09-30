@@ -1,24 +1,17 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class SingleDialogueNode : BaseDialogueNode
 {
-    public string SingleMessage;
+    public string m_singleMessage;
     
-    public BaseDialogueNode nextDialogue;
+    public BaseDialogueNode m_nextDialogue;
 
-    private DialogueTreeStates currentState;
-    private GameObject dialoguePanel;
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    private GameObject m_dialoguePanel;
+
+    public UnityEvent OnDialogFinished;
 
     public override void OnEnabled()
     {
@@ -27,39 +20,38 @@ public class SingleDialogueNode : BaseDialogueNode
 
     public override DialogueTreeStates OnAction()
     {
-        if(dialoguePanel == null)
+        if(m_dialoguePanel == null)
         {
             InitializeDialoguePanel();
         }
-        Debug.Log(SingleMessage);
 
-        return currentState;
+        return m_currentState;
     }
 
     public override BaseDialogueNode GetNextDialogue()
     {
-        Destroy(dialoguePanel);
-        return nextDialogue;
+        Destroy(m_dialoguePanel);
+        return m_nextDialogue;
     }
 
-    private void InitializeDialoguePanel()
+    protected override void InitializeDialoguePanel()
     {
-        currentState = DialogueTreeStates.RUNNING;
+        m_currentState = DialogueTreeStates.RUNNING;
 
-        dialoguePanel = Instantiate((GameObject)Resources.Load("DialoguePanel", typeof(GameObject)));
-        Text[] messages = dialoguePanel.GetComponentsInChildren<Text>();
+        m_dialoguePanel = Instantiate((GameObject)Resources.Load("DialoguePanel", typeof(GameObject)));
+        Text[] messages = m_dialoguePanel.GetComponentsInChildren<Text>();
 
         for(int i=0; i<messages.Length;i++)
         {
             if(messages[i].gameObject.name == "Message")
             {
-                messages[i].text = SingleMessage;
+                messages[i].text = m_singleMessage;
                 break;
             }
 
         }
 
-        Button[] buttons = dialoguePanel.GetComponentsInChildren<Button>();
+        Button[] buttons = m_dialoguePanel.GetComponentsInChildren<Button>();
 
         for (int i = 0; i < buttons.Length; i++)
         {
@@ -76,6 +68,10 @@ public class SingleDialogueNode : BaseDialogueNode
 
     private void OnOptionClicked()
     {
-        currentState = DialogueTreeStates.SUCCESS;
+        if (OnDialogFinished != null)
+        {
+            OnDialogFinished.Invoke();
+        }
+        m_currentState = DialogueTreeStates.SUCCESS;
     }
 }
